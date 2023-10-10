@@ -1,0 +1,52 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract KiralikYerSozlesme {
+    // Kiracı bilgileri
+    struct Kiraci {
+        address kiraciAdres;
+        string kiraciIsmi;
+    }
+
+    // Ev veya dükkan bilgileri
+    struct KiralikYer {
+        address sahipAdres;
+        string yerIsmi;
+        uint256 kiraBaslangicTarihi;
+        uint256 kiraBitisTarihi;
+        bool kirada;
+    }
+
+    // Kiracılar ve kiralık yerler listesi
+    mapping(address => Kiraci) public kiracilar;
+    mapping(address => KiralikYer) public kiralikYerler;
+
+    // Yeni bir kiracı eklemek
+    function kiraciEkle(address _kiraciAdres, string memory _kiraciIsmi) public {
+        Kiraci storage kiraci = kiracilar[_kiraciAdres];
+        kiraci.kiraciAdres = _kiraciAdres;
+        kiraci.kiraciIsmi = _kiraciIsmi;
+    }
+
+    // Yeni bir kiralık yer eklemek
+    function kiralikYerEkle(
+        address _sahipAdres,
+        string memory _yerIsmi,
+        uint256 _kiraBaslangicTarihi,
+        uint256 _kiraBitisTarihi
+    ) public {
+        KiralikYer storage kiralikYer = kiralikYerler[msg.sender];
+        kiralikYer.sahipAdres = _sahipAdres;
+        kiralikYer.yerIsmi = _yerIsmi;
+        kiralikYer.kiraBaslangicTarihi = _kiraBaslangicTarihi;
+        kiralikYer.kiraBitisTarihi = _kiraBitisTarihi;
+        kiralikYer.kirada = true;
+    }
+
+    // Kirayı sonlandırma
+    function kiraSonlandir(address _sahipAdres) public {
+        KiralikYer storage kiralikYer = kiralikYerler[_sahipAdres];
+        require(kiralikYer.sahipAdres == msg.sender, "Sadece sahip kirayı sonlandırabilir.");
+        kiralikYer.kirada = false;
+    }
+}
